@@ -53,6 +53,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	// to load user details by username/param provided from database
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
 		return null;
