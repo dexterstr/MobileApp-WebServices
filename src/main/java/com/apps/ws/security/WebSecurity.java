@@ -34,7 +34,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		.permitAll()
 		.anyRequest()
 		.authenticated()
-		.and().addFilter(new AuthenticationFilter(authenticationManager()));
+		.and().addFilter(getAuthenticationFilter());
 	}
 	
 	
@@ -42,6 +42,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	public void configure(AuthenticationManagerBuilder auth)throws Exception{
 		
 		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder); 
+	}
+	
+	public AuthenticationFilter getAuthenticationFilter()throws Exception{
+		final AuthenticationFilter filter=new AuthenticationFilter(authenticationManager());
+		filter.setFilterProcessesUrl("/users/login");
+		return filter;
 	}
 	
 	
