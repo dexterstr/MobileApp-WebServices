@@ -16,7 +16,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.app.ws.shared.dto.UserDto;
+import com.apps.ws.SpringApplicationContext;
 import com.apps.ws.model.request.UserLoginRequestModel;
+import com.apps.ws.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
@@ -49,7 +52,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	}
 	
 	@Override
-	//if username or password are wrogn then this method wont be called
+	//if username or password are wrong then this method wont be called
 	public void successfulAuthentication(HttpServletRequest req,
 			HttpServletResponse res,
 			FilterChain chain, 
@@ -63,8 +66,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 				.signWith(SignatureAlgorithm.HS512,SecurityConstants.TOKEN_SECRET)
 				.compact();
 	
+		UserService userService=(UserService) SpringApplicationContext.getBean("userServiceImpl");
+		UserDto userDto=userService.getUser(userName);
+		
 		
 		res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX+token);
+		res.addHeader("UserID", userDto.getUserId());
 	}
 	
 	
