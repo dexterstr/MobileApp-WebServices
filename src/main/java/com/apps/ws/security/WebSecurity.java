@@ -5,6 +5,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 //import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -14,13 +15,13 @@ import com.apps.ws.service.UserService;
 public class WebSecurity extends WebSecurityConfigurerAdapter {
 	
 	//UserDetailsService-interface given by spring security
-	private final UserService userDetailsService;
+	private final UserService userService;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	
 	public WebSecurity( UserService userDetailsService,BCryptPasswordEncoder bCryptPasswordEncoder) {
 		this.bCryptPasswordEncoder=bCryptPasswordEncoder;
-		this.userDetailsService=userDetailsService;
+		this.userService=userDetailsService;
 	}
 	
 	@Override
@@ -34,15 +35,18 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		.permitAll()
 		.anyRequest()
 		.authenticated()
-		.and().addFilter(getAuthenticationFilter())
-		.addFilter(new AuthorizationFilter(authenticationManager()));
+		.and()
+		.addFilter(getAuthenticationFilter())
+		.addFilter(new AuthorizationFilter(authenticationManager()))
+		.sessionManagement()
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 	
 	
 	@Override
 	public void configure(AuthenticationManagerBuilder auth)throws Exception{
 		
-		auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder); 
+		auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder); 
 	}
 	
 	public AuthenticationFilter getAuthenticationFilter()throws Exception{

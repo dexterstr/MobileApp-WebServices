@@ -23,6 +23,7 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
+	
 	//binding http boot requests for user
 	// they return json payload, for now just my text. 
 	@GetMapping

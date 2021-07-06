@@ -40,7 +40,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	public Authentication attemptAuthentication(HttpServletRequest req,HttpServletResponse res)throws AuthenticationException{
 		
 		try {
+			//maps json payload data to pojo 
 			UserLoginRequestModel creds=new ObjectMapper().readValue(req.getInputStream(),UserLoginRequestModel.class);
+			
 			
 			return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 					creds.getEmail(),creds.getPassword(),new ArrayList<>()
@@ -63,7 +65,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 		String token=Jwts.builder()
 				.setSubject(userName)
 				.setExpiration(new Date(System.currentTimeMillis()+SecurityConstants.EXPIRATION_DATE))
-				.signWith(SignatureAlgorithm.HS512,SecurityConstants.TOKEN_SECRET)
+				.signWith(SignatureAlgorithm.HS512,SecurityConstants.getTokenSecret())
 				.compact();
 	
 		UserService userService=(UserService) SpringApplicationContext.getBean("userServiceImpl");
