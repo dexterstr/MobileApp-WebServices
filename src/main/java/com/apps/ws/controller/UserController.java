@@ -50,8 +50,10 @@ public class UserController {
 			produces= {MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE})
 	//post request must contain a jsonbody which will contain details of user
-	public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) {
+	public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) throws Exception{
 		UserRest returnValue = new UserRest();
+		
+		if(userDetails.getFirstName().isEmpty()) throw new NullPointerException("firstname is empty");
 		
 		UserDto userDto= new UserDto();
 		
