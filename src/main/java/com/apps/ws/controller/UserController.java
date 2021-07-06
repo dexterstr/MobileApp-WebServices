@@ -2,6 +2,7 @@ package com.apps.ws.controller;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,8 +27,12 @@ public class UserController {
 	
 	
 	//binding http boot requests for user
-	// they return json payload, for now just my text. 
-	@GetMapping(path="/{id}")
+	// they return json payload, 
+	//by default the format is json, to change it to xml
+	//use produces=....mentioned below
+	//i have configure here to respond in either format based on order.-here xml first
+	@GetMapping(path="/{id}",produces= {MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE})
 	public UserRest getUser(@PathVariable String id) {
 		
 		UserRest returnValue= new UserRest();
@@ -38,8 +43,12 @@ public class UserController {
 		return returnValue;
 		
 	}
-	
-	@PostMapping
+	//consumes means takes/providng data in json format i.e http request consumes our data and responses.
+	// produces means sending a response //or the answer in simple terms.
+	@PostMapping(consumes= {MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE},
+			produces= {MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE})
 	//post request must contain a jsonbody which will contain details of user
 	public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) {
 		UserRest returnValue = new UserRest();
