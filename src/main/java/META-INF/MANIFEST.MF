@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
-Class-Path: 
 
+ Main-Class: org.springframework.boot.loader.WarLauncher
+Start-Class: com.apps.ws.MobileAppWebServicesApplication

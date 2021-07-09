@@ -16,7 +16,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.app.ws.shared.dto.UserDto;
+import com.apps.ws.shared.UserDto;
 import com.apps.ws.SpringApplicationContext;
 import com.apps.ws.model.request.UserLoginRequestModel;
 import com.apps.ws.service.UserService;

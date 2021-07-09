@@ -1,4 +1,4 @@
-package com.app.ws.shared.dto;
+package com.apps.ws.shared;
 
 import java.io.Serializable;
 

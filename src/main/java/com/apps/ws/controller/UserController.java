@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.ws.shared.dto.UserDto;
+import com.apps.ws.shared.UserDto;
 import com.apps.ws.model.request.UserDetailsRequestModel;
 import com.apps.ws.model.response.OperationStatusModel;
 import com.apps.ws.model.response.RequestOperationName;
