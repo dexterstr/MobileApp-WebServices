@@ -3,6 +3,8 @@ package com.apps.ws.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,13 +18,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.apps.ws.shared.UserDto;
 import com.apps.ws.model.request.UserDetailsRequestModel;
+import com.apps.ws.model.response.AddressesRest;
 import com.apps.ws.model.response.OperationStatusModel;
 import com.apps.ws.model.response.RequestOperationName;
 import com.apps.ws.model.response.RequestOperationStatus;
 import com.apps.ws.model.response.UserRest;
+import com.apps.ws.service.AddressService;
 import com.apps.ws.service.UserService;
+import com.apps.ws.shared.AddressDto;
+import com.apps.ws.shared.UserDto;
 
 
 @RestController
@@ -31,6 +36,12 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	AddressService addressService;
+	
+	@Autowired 
+	AddressService addreService;
 	
 	
 	//binding http boot requests for user
@@ -49,7 +60,49 @@ public class UserController {
 		
 		return returnValue;
 		
+		
 	}
+	
+	
+	//localhost:8080/users-app/users/userId/addresses
+	@GetMapping(path="/{id}/addresses",produces= {MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE})
+	public List<AddressesRest> getUserAddresses(@PathVariable String id) {
+		
+		List<AddressesRest> returnValue= new ArrayList<>();
+		
+		List<AddressDto> addressDto=addressService.getAddresses(id);
+		
+		if(addressDto!=null & !addressDto.isEmpty()) 
+		{
+		
+		java.lang.reflect.Type listType=new TypeToken<List<AddressesRest>>() {}.getType();
+		
+		returnValue=new ModelMapper().map(addressDto,listType);
+		}	
+		return returnValue;
+		
+		
+	}
+	
+	@GetMapping(path="/{userId}/addresses/{addressId}",produces= {MediaType.APPLICATION_XML_VALUE,
+			MediaType.APPLICATION_JSON_VALUE})
+	public AddressesRest getUserAddress(@PathVariable String addressId) {
+		
+		
+		
+		AddressDto addressDto=addreService.getAddress(addressId);
+		
+		ModelMapper modelMapper=new ModelMapper();
+		
+			
+		return modelMapper.map(addressDto, AddressesRest.class);
+		
+		
+	}
+	
+	
+	
 	
 	@GetMapping(produces= {MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE})
@@ -87,11 +140,19 @@ public class UserController {
 		
 		UserDto userDto= new UserDto();
 		
-		BeanUtils.copyProperties(userDetails,userDto);
+		//this api is best to copy properties from one source obj to another but if an object contains another
+		//object inside its difficult for BeanUtils to figure data-type.
+		//alternate to this is modelmapper
+//		BeanUtils.copyProperties(userDetails,userDto);
+		
+		
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.map(userDetails, userDto);
 		
 		UserDto createdUser = userService.createUser(userDto);
-		BeanUtils.copyProperties(createdUser,returnValue);
+//		BeanUtils.copyProperties(createdUser,returnValue);
 		
+		returnValue=modelMapper.map(createdUser, UserRest.class);
 		
 		return returnValue;
 	}
