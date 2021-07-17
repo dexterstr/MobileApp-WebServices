@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -71,10 +72,9 @@ public class UserController {
 	//localhost:8080/users-app/users/userId/addresses
 	@GetMapping(path="/{id}/addresses",produces= {MediaType.APPLICATION_XML_VALUE,
 			MediaType.APPLICATION_JSON_VALUE})
-	public List<AddressesRest> getUserAddresses(@PathVariable String id) {
+	public CollectionModel<AddressesRest> getUserAddresses(@PathVariable String id) {
 		
 		List<AddressesRest> returnValue= new ArrayList<>();
-		
 		List<AddressDto> addressDto=addressService.getAddresses(id);
 		
 		if(addressDto!=null & !addressDto.isEmpty()) 
@@ -83,8 +83,23 @@ public class UserController {
 		java.lang.reflect.Type listType=new TypeToken<List<AddressesRest>>() {}.getType();
 		
 		returnValue=new ModelMapper().map(addressDto,listType);
-		}	
-		return returnValue;
+		for(AddressesRest addressRest: returnValue) {
+			
+			Link selfLink = WebMvcLinkBuilder
+					.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
+					.getUserAddress(id,addressRest.getAddressId())).withSelfRel();
+			addressRest.add(selfLink);
+			
+		}
+		
+		}
+		
+		Link userLink = WebMvcLinkBuilder.linkTo(UserController.class).slash(id).withRel("user");
+		Link selfLink = WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(UserController.class)
+				.getUserAddresses(id)).withSelfRel();
+		
+		return CollectionModel.of(returnValue,userLink,selfLink);
 		
 		
 	}
