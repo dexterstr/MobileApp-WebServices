@@ -1,6 +1,11 @@
 package com.apps.ws.model.response;
 
+import org.springframework.hateoas.RepresentationModel;
+
+
+
 public class AddressesRest {
+//public class AddressesRest extends RepresentationModel<AddressesRest> {
 
 	
 	
